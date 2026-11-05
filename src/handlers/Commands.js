@@ -5,6 +5,7 @@ const { Collection } = require("discord.js");
 module.exports = (client) => {
     client.slashCommands = new Collection();
     client.prefixCommands = new Collection();
+    client.commandCategories = new Map();
 
     const pastaComandosPath = path.join(__dirname, "../commands");
     const categorias = fs.readdirSync(pastaComandosPath);
@@ -17,25 +18,31 @@ module.exports = (client) => {
                 .readdirSync(caminhoCategoria)
                 .filter((file) => file.endsWith(".js"));
 
+            // Inicializa a lista da categoria no client
+            if (!client.commandCategories.has(categoria)) {
+                client.commandCategories.set(categoria, []);
+            }
+
             arquivos.forEach((arquivo) => {
                 const comando = require(path.join(caminhoCategoria, arquivo));
+                comando.category = categoria; // Injeta a categoria no objeto do comando
 
-                // Registra se tiver suporte a Slash
                 if (comando.data && comando.executeSlash) {
                     client.slashCommands.set(comando.data.name, comando);
                 }
 
-                // Registra se tiver suporte a Prefixo
                 if (comando.name && comando.executePrefix) {
                     client.prefixCommands.set(comando.name, comando);
 
-                    // Se houver apelidos (aliases), registra também
                     if (comando.aliases && Array.isArray(comando.aliases)) {
                         comando.aliases.forEach((alias) => {
                             client.prefixCommands.set(alias, comando);
                         });
                     }
                 }
+
+                // Adiciona o comando na categoria correspondente no client
+                client.commandCategories.get(categoria).push(comando);
 
                 console.log(`[Comando Carregado] ${arquivo} (${categoria})`);
             });
