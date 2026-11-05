@@ -1,0 +1,16 @@
+# Dependências
+node_modules/
+
+# Configurações sensíveis e tokens
+src/configs/config.json
+
+# Logs de execução
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
