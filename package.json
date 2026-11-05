@@ -1,8 +1,16 @@
 {
     "name": "BaseBot",
-    "version": "0.0.1",
+    "version": "1.0.1",
     "description": "A base de um novo bot no Discord com discord.js",
     "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/felipebonfim2006/BaseBot.git"
+    },
+    "bugs": {
+        "url": "https://github.com/felipebonfim2006/BaseBot/issues"
+    },
+    "homepage": "https://github.com/felipebonfim2006/BaseBot#readme",
     "license": "MIT",
     "scripts": {
         "dev": "nodemon index.js"

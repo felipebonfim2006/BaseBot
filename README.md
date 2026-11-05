@@ -1,45 +1,43 @@
 # 🤖 Guia de Configuração e Inicialização do Bot
 
-Este guia explica como configurar o ambiente, utilizar o ficheiro de configuração e iniciar o bot no teu servidor do Discord.
+Este guia explica como configurar o ambiente, preencher o arquivo de configuração e iniciar o bot no seu servidor do Discord.
 
 ---
 
-## ⚙️ 1. Configuração do Arquivo de Config
+## ⚙️ 1. Configuração do Arquivo de Configuração
 
-O bot precisa de um ficheiro de configuração localizado na pasta `src/configs/` para funcionar corretamente.
+Para funcionar corretamente, o bot precisa de um arquivo de configuração localizado na pasta `src/configs/`.
 
-1. Na pasta `src/configs/`, cria um arquivo chamado `config.json` (podes basear-te num modelo `ex.config.json`).
-2. Preenche as informações necessárias seguindo a estrutura abaixo:
+1. Dentro da pasta `src/configs/`, crie um arquivo chamado `config.json` (você pode usar o arquivo `ex.config.json` como modelo).
+2. Preencha as informações necessárias seguindo a estrutura abaixo:
 
 ```json
 {
-    // Configuração obrigatória para iniciar
     "token": "token-do-bot",
-    "prefix": "prefixo-para-comandos-em-chat",
-    // Para os slash commands funcionarem no servidor sem tempo de espera
+    "prefix": "prefixo-dos-comandos",
     "guild_id": "id-do-servidor",
-    "client_id": "client-id-do-bot"
+    "client_id": "id-do-cliente-do-bot"
 }
 ```
 
-- **`token`**: O token secreto do teu bot obtido no [Discord Developer Portal](https://discord.com/developers/applications).
-- **`prefix`**: O prefixo utilizado para os comandos de chat tradicionais (ex: `?` ou `!`).
-- **`guild_id`**: O ID do teu servidor (guilda) do Discord para o registo instantâneo de Slash Commands.
-- **`client_id`**: O ID da aplicação (Client ID) do teu bot no Discord Developer Portal.
+- **`token`**: Token secreto do seu bot, obtido no [Discord Developer Portal](https://discord.com/developers/applications).
+- **`prefix`**: Prefixo utilizado nos comandos tradicionais enviados pelo chat (ex.: `?` ou `!`).
+- **`guild_id`**: ID do seu servidor do Discord. Ele é utilizado para registrar os Slash Commands diretamente no servidor, sem precisar esperar pela atualização global.
+- **`client_id`**: ID da aplicação (Client ID) do seu bot, disponível no Discord Developer Portal.
 
 ---
 
-## 📦 2. Instalação de Dependências
+## 📦 2. Instalação das Dependências
 
-Antes de iniciar o bot pela primeira vez, certifica-te de que tens o [Node.js](https://nodejs.org/) instalado e executa o comando de instalação no terminal, na raiz do projeto:
+Antes de iniciar o bot pela primeira vez, verifique se o [Node.js](https://nodejs.org/) está instalado. Em seguida, abra o terminal na pasta raiz do projeto e execute um dos comandos abaixo:
 
-### Usando o NPM:
+### Usando NPM
 
 ```bash
 npm install
 ```
 
-### Usando o Yarn:
+### Usando Yarn
 
 ```bash
 yarn install
@@ -49,11 +47,11 @@ yarn install
 
 ## 🚀 3. Como Iniciar o Bot
 
-Podes iniciar o bot utilizando o gestor de pacotes da tua preferência:
+Você pode iniciar o bot utilizando o gerenciador de pacotes de sua preferência:
 
 ### Usando NPM
 
-Para ligar o bot normalmente:
+Para iniciar o bot normalmente, execute:
 
 ```bash
 npm start
@@ -61,13 +59,13 @@ npm start
 
 ### Usando Yarn
 
-Para ligar o bot normalmente:
+Para iniciar o bot normalmente, execute:
 
 ```bash
 yarn start
 ```
 
-> **Dica de Desenvolvimento:** Se quiseres que o bot reinicie automaticamente sempre que alterares algum ficheiro do código, podes utilizar o modo de desenvolvimento:
+> **Dica para desenvolvimento:** Se quiser que o bot reinicie automaticamente sempre que algum arquivo do código for alterado, utilize o modo de desenvolvimento:
 >
-> - Com npm: `npm run dev`
-> - Com yarn: `yarn dev`
+> - Com NPM: `npm run dev`
+> - Com Yarn: `yarn dev`
