@@ -4,7 +4,7 @@ const path = require("path");
 module.exports = (client) => {
     const pastaEventsPath = path.join(__dirname, "../events");
 
-    // Lê as pastas/categorias dentro de /events
+    // Carrega os arquivos de eventos de cada categoria
     const pastasEventos = fs.readdirSync(pastaEventsPath);
 
     pastasEventos.forEach((pasta) => {
@@ -19,7 +19,7 @@ module.exports = (client) => {
                 const caminhoArquivo = path.join(caminhoPasta, arquivo);
                 const evento = require(caminhoArquivo);
 
-                // Se o evento usa once ou on
+                // Registra o evento uma vez ou continuamente
                 if (evento.once) {
                     client.once(evento.name, (...args) =>
                         evento.execute(...args, client),

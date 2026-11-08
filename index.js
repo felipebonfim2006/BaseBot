@@ -1,8 +1,9 @@
-// Dependencias e configuracoes
+// Dependências
 const { Client, GatewayIntentBits } = require("discord.js");
 const { token } = require("./src/configs/config.json");
+const connectDB = require("./src/database/mongoose");
 
-// Criacao da instancia do bot/client com os intents corretos
+// Cliente do Discord com os intents necessários
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -12,7 +13,10 @@ const client = new Client({
     ],
 });
 
-// Manipulacao de comandos e eventos
+// Conexão com o MongoDB
+connectDB();
+
+// Carrega os handlers de eventos e comandos
 ["Events", "Commands"].forEach((handler) => {
     try {
         require(`./src/handlers/${handler}.js`)(client);
@@ -21,5 +25,5 @@ const client = new Client({
     }
 });
 
-// Conexao com o bot
+// Login do bot
 client.login(token);

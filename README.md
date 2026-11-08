@@ -1,35 +1,50 @@
-# 🤖 Guia de Configuração e Inicialização do Bot
+# 🤖 BaseBot
 
-Este guia explica como configurar o ambiente, preencher o arquivo de configuração e iniciar o bot no seu servidor do Discord.
+Base para um bot de Discord com `discord.js`, comandos por prefixo, Slash Commands e persistência no MongoDB.
 
 ---
 
-## ⚙️ 1. Configuração do Arquivo de Configuração
+## 📋 Requisitos
 
-Para funcionar corretamente, o bot precisa de um arquivo de configuração localizado na pasta `src/configs/`.
+- [Node.js](https://nodejs.org/) 18 ou superior.
+- Um servidor MongoDB acessível (local ou na nuvem).
+- Uma aplicação criada no [Discord Developer Portal](https://discord.com/developers/applications).
 
-1. Dentro da pasta `src/configs/`, crie um arquivo chamado `config.json` (você pode usar o arquivo `ex.config.json` como modelo).
-2. Preencha as informações necessárias seguindo a estrutura abaixo:
+---
+
+## ⚙️ 1. Configuração
+
+Na pasta `src/configs/`, copie o arquivo `ex.config.json` para `config.json` e preencha os valores:
+
+```bash
+cp src/configs/ex.config.json src/configs/config.json
+```
 
 ```json
 {
-    "token": "token-do-bot",
-    "prefix": "prefixo-dos-comandos",
+    "token": "seu-token-do-bot",
+    "prefix": "?",
     "guild_id": "id-do-servidor",
-    "client_id": "id-do-cliente-do-bot"
+    "client_id": "id-do-cliente-do-bot",
+    "mongo_uri": "uri-do-mongodb"
 }
 ```
 
-- **`token`**: Token secreto do seu bot, obtido no [Discord Developer Portal](https://discord.com/developers/applications).
-- **`prefix`**: Prefixo utilizado nos comandos tradicionais enviados pelo chat (ex.: `?` ou `!`).
-- **`guild_id`**: ID do seu servidor do Discord. Ele é utilizado para registrar os Slash Commands diretamente no servidor, sem precisar esperar pela atualização global.
-- **`client_id`**: ID da aplicação (Client ID) do seu bot, disponível no Discord Developer Portal.
+| Campo | Descrição |
+| --- | --- |
+| `token` | Token do bot, disponível na aba **Bot** do Discord Developer Portal. |
+| `prefix` | Prefixo dos comandos enviados pelo chat (ex.: `?` ou `!`). |
+| `guild_id` | ID do servidor onde os Slash Commands serão registrados imediatamente. |
+| `client_id` | ID da aplicação, disponível na aba **General Information** do Discord Developer Portal. |
+| `mongo_uri` | String de conexão do MongoDB usada para salvar os dados do bot. |
+
+> **Importante:** o arquivo `config.json` contém dados sensíveis e está listado no `.gitignore`. Nunca publique seu token ou suas credenciais do MongoDB.
 
 ---
 
-## 📦 2. Instalação das Dependências
+## 📦 2. Instalação
 
-Antes de iniciar o bot pela primeira vez, verifique se o [Node.js](https://nodejs.org/) está instalado. Em seguida, abra o terminal na pasta raiz do projeto e execute um dos comandos abaixo:
+Abra o terminal na raiz do projeto e instale as dependências:
 
 ### Usando NPM
 
@@ -45,13 +60,9 @@ yarn install
 
 ---
 
-## 🚀 3. Como Iniciar o Bot
-
-Você pode iniciar o bot utilizando o gerenciador de pacotes de sua preferência:
+## 🚀 3. Como iniciar o bot
 
 ### Usando NPM
-
-Para iniciar o bot normalmente, execute:
 
 ```bash
 npm start
@@ -59,13 +70,29 @@ npm start
 
 ### Usando Yarn
 
-Para iniciar o bot normalmente, execute:
-
 ```bash
 yarn start
 ```
 
-> **Dica para desenvolvimento:** Se quiser que o bot reinicie automaticamente sempre que algum arquivo do código for alterado, utilize o modo de desenvolvimento:
->
-> - Com NPM: `npm run dev`
-> - Com Yarn: `yarn dev`
+### Modo de desenvolvimento
+
+Para reiniciar o bot automaticamente quando um arquivo for alterado:
+
+```bash
+npm run dev
+# ou
+yarn dev
+```
+
+---
+
+## 📁 Estrutura do projeto
+
+```text
+src/
+├── commands/       # Comandos separados por categoria
+├── configs/        # config.json (local) e ex.config.json (modelo)
+├── database/       # Conexão com o MongoDB e modelos
+├── events/         # Eventos do cliente Discord
+└── handlers/       # Carregadores de comandos e eventos
+```

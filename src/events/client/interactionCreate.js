@@ -21,7 +21,7 @@ module.exports = {
                 error,
             );
 
-            // Verifica se o bot já respondeu ou adiou a resposta para evitar novos erros do Discord
+            // Evita responder duas vezes à mesma interação
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({
                     content: "Houve um erro ao executar este comando!",

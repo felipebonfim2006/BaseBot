@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
-    // --- CONFIGURAÇÃO DO SLASH COMMAND ---
+    // Slash Command
     data: new SlashCommandBuilder()
         .setName("avatar")
         .setDescription("Mostra a foto de perfil de um usuário")
@@ -12,12 +12,12 @@ module.exports = {
                 .setRequired(false),
         ),
 
-    // --- CONFIGURAÇÃO DO COMANDO POR PREFIXO ---
+    // Comando por prefixo
     name: "avatar",
     aliases: ["av", "foto"],
+    description: "Retorna a imagem de perfil do usuario ou o mencionado.",
 
-    // --- EXECUÇÃO DO SLASH COMMAND (/avatar) ---
-    async executeSlash(interaction, client) {
+    async executeSlash(interaction) {
         const usuario =
             interaction.options.getUser("usuario") || interaction.user;
 
@@ -40,8 +40,7 @@ module.exports = {
         await interaction.reply({ embeds: [avatarEmbed] });
     },
 
-    // --- EXECUÇÃO DO COMANDO POR PREFIXO (?avatar) ---
-    async executePrefix(message, args, client) {
+    async executePrefix(message) {
         const usuario = message.mentions.users.first() || message.author;
 
         const avatarURL = usuario.displayAvatarURL({

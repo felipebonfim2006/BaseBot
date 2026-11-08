@@ -1,27 +1,25 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
-    // Configuração para Slash Command (opcional)
+    // Slash Command
     data: new SlashCommandBuilder()
         .setName("help")
         .setDescription("Mostra a lista de comandos disponíveis no bot."),
 
-    // Configuração para Prefixo (opcional)
+    // Comando por prefixo
     name: "help",
     aliases: ["ajuda", "comandos"],
+    description: "Lista os comandos disponiveis.",
 
-    // Execução via Slash
     async executeSlash(interaction) {
-        await this.sendHelp(interaction, true);
+        await this.sendHelp(interaction);
     },
 
-    // Execução via Prefixo
-    async executePrefix(message, args) {
-        await this.sendHelp(message, false);
+    async executePrefix(message) {
+        await this.sendHelp(message);
     },
 
-    // Função central que monta e envia o Embed
-    async sendHelp(context, isSlash) {
+    async sendHelp(context) {
         const client = context.client;
         const categories = client.commandCategories;
 
@@ -31,13 +29,12 @@ module.exports = {
             .setDescription("Aqui estão todos os comandos disponíveis no bot:")
             .setTimestamp();
 
-        // Se o client possuir as categorias estruturadas
+        // Agrupa os comandos por categoria
         if (categories && categories.size > 0) {
             for (const [categoria, comandos] of categories.entries()) {
                 const nomeFormatado =
                     categoria.charAt(0).toUpperCase() + categoria.slice(1);
 
-                // Formata a lista de comandos da categoria
                 const listaComandos = comandos
                     .map((cmd) => {
                         const nome = cmd.data?.name || cmd.name;
@@ -53,7 +50,7 @@ module.exports = {
                 });
             }
         } else {
-            // Fallback caso pegue direto das collections gerais
+            // Fallback para as collections gerais do client
             const comandos = client.slashCommands || client.prefixCommands;
             let lista = "";
             comandos.forEach((cmd) => {
@@ -68,9 +65,6 @@ module.exports = {
             });
         }
 
-        // Responde de acordo com o tipo de invocação (Slash ou Prefixo)
-        return isSlash
-            ? context.reply({ embeds: [embed] })
-            : context.reply({ embeds: [embed] });
+        return context.reply({ embeds: [embed] });
     },
 };

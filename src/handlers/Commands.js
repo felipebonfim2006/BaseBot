@@ -18,14 +18,14 @@ module.exports = (client) => {
                 .readdirSync(caminhoCategoria)
                 .filter((file) => file.endsWith(".js"));
 
-            // Inicializa a lista da categoria no client
+            // Cria a lista da categoria no client
             if (!client.commandCategories.has(categoria)) {
                 client.commandCategories.set(categoria, []);
             }
 
             arquivos.forEach((arquivo) => {
                 const comando = require(path.join(caminhoCategoria, arquivo));
-                comando.category = categoria; // Injeta a categoria no objeto do comando
+                comando.category = categoria;
 
                 if (comando.data && comando.executeSlash) {
                     client.slashCommands.set(comando.data.name, comando);
@@ -41,7 +41,6 @@ module.exports = (client) => {
                     }
                 }
 
-                // Adiciona o comando na categoria correspondente no client
                 client.commandCategories.get(categoria).push(comando);
 
                 console.log(`[Comando Carregado] ${arquivo} (${categoria})`);

@@ -1,5 +1,5 @@
 const { Events, REST, Routes, ActivityType } = require("discord.js");
-const { token, client_id, guild_id } = require("../../configs/config.json"); // Ajuste o caminho do config se precisar
+const { token, client_id, guild_id } = require("../../configs/config.json");
 
 module.exports = {
     name: Events.ClientReady,
@@ -8,17 +8,17 @@ module.exports = {
         client.user.setPresence({
             activities: [
                 {
-                    name: "Seus atos questionáveis", // O texto que aparece no perfil
-                    type: ActivityType.Watching, // Tipo de atividade (Playing, Streaming, Listening, Watching, Competing)
+                    name: "Seus atos questionáveis",
+                    type: ActivityType.Watching,
                 },
             ],
-            status: "idle", // O estado (online, idle, dnd, invisible)
+            status: "idle",
         });
         console.log(`Ready! Logged in as ${client.user.tag}`);
 
         const commandsJson = [];
 
-        // Pega todos os comandos slash que o seu commandHandler salvou no client
+        // Coleta os Slash Commands carregados
         if (client.slashCommands) {
             client.slashCommands.forEach((cmd) => {
                 if (cmd.data) {
@@ -34,7 +34,7 @@ module.exports = {
                 `[Deploy] Atualizando ${commandsJson.length} comandos slash na guilda...`,
             );
 
-            // Envia para o Discord de forma instantânea para a sua guilda
+            // Registra os comandos na guild configurada
             await rest.put(
                 Routes.applicationGuildCommands(client_id, guild_id),
                 { body: commandsJson },

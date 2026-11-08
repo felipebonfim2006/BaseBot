@@ -13,13 +13,13 @@
     "homepage": "https://github.com/felipebonfim2006/BaseBot#readme",
     "license": "MIT",
     "scripts": {
+        "start": "node index.js",
         "dev": "nodemon index.js"
     },
     "private": false,
     "dependencies": {
-        "better-sqlite3": "^13.0.3",
         "discord.js": "^14.28.1",
-        "sequelize": "^6.37.8"
+        "mongoose": "^9.12.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
