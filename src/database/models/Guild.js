@@ -1,11 +1,10 @@
 const { Schema, model } = require("mongoose");
+const { prefix } = require("../../configs/config.json");
 
-// Estrutura do documento de servidor (guild)
 const guildSchema = new Schema({
     guildId: { type: String, required: true, unique: true },
-    prefix: { type: String, required: true },
-    registadoEm: { type: Date, default: Date.now },
+    prefix: { type: String, default: prefix }, // Prefixo padrão de segurança
+    slashCommandsAtivos: { type: Boolean, default: false },
 });
 
-// Exporta o modelo Guild
 module.exports = model("Guild", guildSchema);

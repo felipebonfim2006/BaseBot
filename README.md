@@ -24,19 +24,17 @@ cp src/configs/ex.config.json src/configs/config.json
 {
     "token": "seu-token-do-bot",
     "prefix": "?",
-    "guild_id": "id-do-servidor",
     "client_id": "id-do-cliente-do-bot",
     "mongo_uri": "uri-do-mongodb"
 }
 ```
 
-| Campo | Descrição |
-| --- | --- |
-| `token` | Token do bot, disponível na aba **Bot** do Discord Developer Portal. |
-| `prefix` | Prefixo dos comandos enviados pelo chat (ex.: `?` ou `!`). |
-| `guild_id` | ID do servidor onde os Slash Commands serão registrados imediatamente. |
+| Campo       | Descrição                                                                               |
+| ----------- | --------------------------------------------------------------------------------------- |
+| `token`     | Token do bot, disponível na aba **Bot** do Discord Developer Portal.                    |
+| `prefix`    | Prefixo dos comandos enviados pelo chat (ex.: `?` ou `!`).                              |
 | `client_id` | ID da aplicação, disponível na aba **General Information** do Discord Developer Portal. |
-| `mongo_uri` | String de conexão do MongoDB usada para salvar os dados do bot. |
+| `mongo_uri` | String de conexão do MongoDB usada para salvar os dados do bot.                         |
 
 > **Importante:** o arquivo `config.json` contém dados sensíveis e está listado no `.gitignore`. Nunca publique seu token ou suas credenciais do MongoDB.
 

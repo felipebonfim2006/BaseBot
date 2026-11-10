@@ -13,6 +13,16 @@ module.exports = {
             return;
         }
 
+        // Verifica se o usuario tem permissao para usar o comando
+        if (comando.userPermissions && comando.userPermissions.length > 0) {
+            if (!interaction.member.permissions.has(comando.userPermissions)) {
+                return interaction.reply({
+                    content: "❌ Não tens permissão para usar este comando.",
+                    ephemeral: true, // Visível apenas para quem tentou usar
+                });
+            }
+        }
+
         try {
             await comando.executeSlash(interaction, client);
         } catch (error) {
