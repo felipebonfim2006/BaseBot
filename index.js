@@ -1,7 +1,7 @@
 // Dependências
-const { Client, GatewayIntentBits } = require("discord.js");
-const { token } = require("./src/configs/config.json");
-const connectDB = require("./src/database/mongoose");
+import { Client, GatewayIntentBits } from "discord.js";
+import connectDB from "./src/database/mongoose.js";
+import "dotenv/config";
 
 // Cliente do Discord com os intents necessários
 const client = new Client({
@@ -13,17 +13,32 @@ const client = new Client({
     ],
 });
 
-// Conexão com o MongoDB
-connectDB();
+// Inicia a conexão com o MongoDB
+await connectDB();
 
-// Carrega os handlers de eventos e comandos
-["Events", "Commands"].forEach((handler) => {
+// Lista com os nomes dos handlers que serão carregados dinamicamente
+const handlers = ["events", "commands"];
+
+// Percorre cada handler na ordem definida no array
+for (const handler of handlers) {
     try {
-        require(`./src/handlers/${handler}.js`)(client);
+        // Importa dinamicamente o arquivo do handler no padrão ESM
+        const module = await import(`./src/handlers/${handler}.js`);
+
+        // Verifica se o export default é uma função antes de executar
+        if (typeof module.default === "function") {
+            // Aguarda a execução do handler passando a instância do client
+            await module.default(client);
+        } else {
+            console.warn(
+                `[WARNING] O handler ${handler} não possui um export default válido.`,
+            );
+        }
     } catch (err) {
-        console.error(`Erro ao carregar ${handler}:`, err.message);
+        // Captura e exibe erros de importação ou execução sem derrubar os outros handlers
+        console.error(`[ERROR] Erro ao carregar o handler ${handler}:`, err);
     }
-});
+}
 
 // Login do bot
-client.login(token);
+await client.login(process.env.TOKEN);

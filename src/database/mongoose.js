@@ -1,15 +1,15 @@
-const mongoose = require("mongoose");
-const { mongo_uri } = require("../configs/config.json");
+import { connect } from "mongoose";
+import "dotenv/config";
 
 async function connectDB() {
+    // try/catch para tentar conectar ao Banco de dados
     try {
-        await mongoose.connect(mongo_uri);
-        console.log(
-            "✅ Ligação à base de dados MongoDB estabelecida com sucesso!",
-        );
-    } catch (error) {
-        console.error("❌ Erro ao ligar à base de dados:", error);
+        // Inicia a conexão
+        await connect(process.env.MONGO_URI);
+        console.log("[DATABASE] Conexão com MongoDB realizada com sucesso!");
+    } catch (err) {
+        console.error("[ERROR] Ocorreu um erro ao conectar ao MongoDB: ", err);
     }
 }
 
-module.exports = connectDB;
+export default connectDB;

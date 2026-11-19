@@ -1,6 +1,0 @@
-{
-    "token": "seu-token-do-bot",
-    "prefix": "?",
-    "client_id": "id-do-cliente-do-bot",
-    "mongo_uri": "uri-do-mongodb"
-}

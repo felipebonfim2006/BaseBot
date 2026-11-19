@@ -2,7 +2,7 @@
 node_modules/
 
 # Configurações sensíveis e tokens
-src/configs/config.json
+.env
 
 # Logs de execução
 npm-debug.log*

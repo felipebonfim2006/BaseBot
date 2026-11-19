@@ -1,25 +1,25 @@
-const { Events } = require("discord.js");
-const { prefix: prefixoPadrao } = require("../../configs/config.json");
-const Guild = require("../../database/models/Guild"); // Importa o modelo do servidor
+import { Events } from "discord.js";
+import "dotenv/config";
 
-module.exports = {
+export default {
+    // Define o evento a ser escutado (Nova mensagem enviada no chat)
     name: Events.MessageCreate,
+
+    // Função executada sempre que o evento é disparado
     async execute(message, client) {
+        // Ignora mensagens enviadas por outros bots ou mensagens que não sejam em servidores (DMs)
         if (message.author.bot || !message.guild) return;
 
-        // 1. Busca o prefixo do servidor na base de dados
-        let guildProfile = await Guild.findOne({ guildId: message.guild.id });
+        // Define o prefixo fixo do bot com base no arquivo de configuração
+        const prefix = process.env.PREFIX;
 
-        // Se o servidor tiver um prefixo na DB, usa-o. Senão, usa o do config.json
-        const prefix = guildProfile ? guildProfile.prefix : prefixoPadrao;
-
-        // Detecta o bot mencionado no início da mensagem
+        // Cria uma expressão regular para detetar se o bot foi mencionado no início da mensagem
         const prefixMention = new RegExp(`^<@!?${client.user.id}>\\s*`);
 
         let usadoPrefix = false;
         let conteudoParaProcessar = "";
 
-        // Verifica se a mensagem usa o prefixo da base de dados ou a menção
+        // Verifica se a mensagem começa com o prefixo ou com a menção ao bot
         if (message.content.startsWith(prefix)) {
             conteudoParaProcessar = message.content.slice(prefix.length).trim();
             usadoPrefix = true;
@@ -30,36 +30,42 @@ module.exports = {
             usadoPrefix = true;
         }
 
+        // Se a mensagem não usar o prefixo nem a menção, ignora
         if (!usadoPrefix) return;
 
-        // Se o utilizador apenas mencionar o bot, responde com o prefixo atual do servidor
+        // Se o utilizador apenas mencionar o bot, responde informando o prefixo atual
         if (!conteudoParaProcessar) {
             return message.reply(
-                `Olá, ${message.author}! O meu prefixo neste servidor é \`${prefix}\`. Podes aceder ao meu painel de ajuda digitando \`/help\` ou \`${prefix}help\`.`,
+                `Olá, ${message.author}! O meu prefixo neste servidor é \`${prefix}\`. Você pode acessar o meu painel de ajuda digitando \`/help\` ou \`${prefix}help\`.`,
             );
         }
 
+        // Separa os argumentos e identifica o nome do comando digitado
         const args = conteudoParaProcessar.split(/ +/);
         const nomeComando = args.shift().toLowerCase();
 
+        // Procura o comando pelo nome principal ou pelos aliases na collection do client
         const comando =
             client.prefixCommands.get(nomeComando) ||
             client.prefixCommands.find(
                 (cmd) => cmd.aliases && cmd.aliases.includes(nomeComando),
             );
 
+        // Se o comando não for encontrado, encerra a execução
         if (!comando) return;
 
-        // Verifica se o usuario tem permissao para usar o comando
+        // Verifica se o utilizador possui as permissões necessárias para usar o comando
         if (comando.userPermissions && comando.userPermissions.length > 0) {
             if (!message.member.permissions.has(comando.userPermissions)) {
                 return message.reply({
-                    content: "❌ Não tens permissão para usar este comando.",
+                    content:
+                        "Você não tem permissão para utilizar este comando.",
                 });
             }
         }
 
         try {
+            // Executa a função do comando por prefixo
             await comando.executePrefix(message, args, client);
         } catch (error) {
             console.error(error);
