@@ -22,7 +22,7 @@ export default {
             client.user.setPresence({
                 activities: [
                     {
-                        name: `${client.user.username} | /help,`,
+                        name: `${client.user.username} | /help`,
                         type: ActivityType.Watching,
                     },
                 ],
