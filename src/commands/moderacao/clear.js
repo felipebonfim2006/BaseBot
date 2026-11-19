@@ -2,6 +2,7 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     PermissionFlagsBits,
+    MessageFlags,
 } from "discord.js";
 
 export default {
@@ -47,7 +48,10 @@ export default {
             .setTimestamp();
 
         // Responde de forma efêmera (apenas o usuário vê) para manter o chat limpo
-        await interaction.reply({ embeds: [clearEmbed], ephemeral: true });
+        await interaction.reply({
+            embeds: [clearEmbed],
+            flags: MessageFlags.Ephemeral,
+        });
     },
 
     // Função executada quando o comando é acionado via Prefixo (ex: !clear)

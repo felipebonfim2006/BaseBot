@@ -2,6 +2,7 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     PermissionFlagsBits,
+    MessageFlags,
 } from "discord.js";
 import GuildModel from "../../database/models/GuildModel.js";
 
@@ -38,7 +39,7 @@ export default {
         if (!novoPrefixo || novoPrefixo.length > 3) {
             return interaction.reply({
                 content: "O novo prefixo deve ter entre 1 e 3 caracteres.",
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         }
 
