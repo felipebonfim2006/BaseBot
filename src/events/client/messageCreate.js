@@ -1,4 +1,5 @@
 import { Events } from "discord.js";
+import GuildModel from "../../database/models/GuildModel.js";
 import "dotenv/config";
 
 export default {
@@ -10,8 +11,29 @@ export default {
         // Ignora mensagens enviadas por outros bots ou mensagens que não sejam em servidores (DMs)
         if (message.author.bot || !message.guild) return;
 
+        // Obtém o ID do servidor da mensagem
+        const guildId = message.guild.id;
+
+        // Procura os dados do servidor no banco de dados
+        let guildData = await GuildModel.findOne({ guildID: guildId });
+
+        // Se não houver dados do servidor, cria um novo documento com o prefixo padrão
+        if (!guildData) {
+            guildData = new GuildModel({
+                guildID: guildId,
+                prefix: process.env.PREFIX || "?", // Define o prefixo padrão por segurança
+            });
+            await guildData.save();
+        } else {
+            // Se já houver dados do servidor, atualiza o prefixo caso esteja vazio
+            if (!guildData.prefix) {
+                guildData.prefix = process.env.PREFIX || "?"; // Define o prefixo padrão por segurança
+            };
+            await guildData.save();
+        }
+
         // Define o prefixo fixo do bot com base no arquivo de configuração
-        const prefix = process.env.PREFIX;
+        const prefix = guildData.prefix || process.env.PREFIX || "?"; // Define o prefixo padrão por segurança
 
         // Cria uma expressão regular para detetar se o bot foi mencionado no início da mensagem
         const prefixMention = new RegExp(`^<@!?${client.user.id}>\\s*`);
