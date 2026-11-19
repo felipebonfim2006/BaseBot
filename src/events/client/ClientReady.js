@@ -1,16 +1,36 @@
-import { Events, REST, Routes, ActivityType } from "discord.js";
+import {
+    Events,
+    REST,
+    Routes,
+    ActivityType,
+    PresenceUpdateStatus,
+} from "discord.js";
 import "dotenv/config";
+
+// Auxiliar simples para aguardar um tempo antes de aplicar a presença
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default {
     name: Events.ClientReady,
     once: true,
     async execute(client) {
-        // Define a atividade do bot
-        client.user.setPresence({
-            activities: [{ name: "BaseBot", type: ActivityType.Watching }],
-            statusbar: "idle",
-        });
+        // Aguarda brevemente para garantir que o Gateway concluiu a inicialização da sessão
+        await delay(1500);
 
+        // Define a atividade do bot
+        try {
+            client.user.setPresence({
+                activities: [
+                    {
+                        name: `${client.user.username} | /help,`,
+                        type: ActivityType.Watching,
+                    },
+                ],
+                status: PresenceUpdateStatus.Idle,
+            });
+        } catch (error) {
+            console.error("Erro ao definir a atividade do bot:", error);
+        }
         // Cria uma instância do REST para registrar os comandos
         const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
