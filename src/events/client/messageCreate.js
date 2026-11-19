@@ -28,7 +28,7 @@ export default {
             // Se já houver dados do servidor, atualiza o prefixo caso esteja vazio
             if (!guildData.prefix) {
                 guildData.prefix = process.env.PREFIX || "?"; // Define o prefixo padrão por segurança
-            };
+            }
             await guildData.save();
         }
 

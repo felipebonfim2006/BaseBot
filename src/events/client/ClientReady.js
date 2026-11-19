@@ -1,85 +1,79 @@
 import { Events, REST, Routes, ActivityType } from "discord.js";
 import "dotenv/config";
-// import Guild from '../../database/models/Guild.js';
 
 export default {
     name: Events.ClientReady,
     once: true,
     async execute(client) {
-        // Configura o status do bot
+        // Define a atividade do bot
         client.user.setPresence({
-            activities: [
-                {
-                    name: "A Lua",
-                    type: ActivityType.Watching,
-                },
-            ],
-            status: "idle",
+            activities: [{ name: "BaseBot", type: ActivityType.Watching }],
+            statusbar: "idle",
         });
-        console.log(`[READY] Logged in as ${client.user.tag}`);
 
+        // Cria uma instância do REST para registrar os comandos
+        const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+
+        // Array para armazenar os comandos de barra a serem registrados
         const commandsJson = [];
 
-        // Coleta os Slash Commands carregados da memória
         if (client.slashCommands) {
-            client.slashCommands.forEach((cmd) => {
-                if (cmd.data) {
-                    commandsJson.push(cmd.data.toJSON());
-                }
+            // Adiciona os comandos de barra ao array
+            client.slashCommands.forEach((command) => {
+                commandsJson.push(command.data.toJSON());
             });
         }
 
-        const rest = new REST().setToken(process.env.TOKEN);
+        // ESCOLHA APENAS UMA DAS OPÇÕES ABAIXO PARA REGISTRAR OS COMANDOS DE BARRA, NÃO AMBAS AO MESMO TEMPO
 
-        try {
-            /* 
-              ==================================================
-              PARTE DO BANCO DE DADOS COMENTADA (Não será executada)
-              ==================================================
-            
-            // 1. Procura na base de dados APENAS os servidores com os slash commands ativados
-            const servidoresAtivos = await Guild.find({
-                slashCommandsAtivos: true,
-            });
+        // [OPÇÃO 1 - Registo por presença do bot] Registra os comandos com prioridade para cada servidor que o bot está presente, substituindo os já registrados para evitar duplicidade
+        for (const guild of client.guilds.cache.values()) {
+            try {
+                // Exibe no console o início do registro de slash commands para o servidor atual
+                console.log(
+                    `[DEPLOY SLASH COMMANDS] Registrando comandos de barra para o servidor: ${guild.name} (${guild.id})`,
+                );
 
-            console.log(
-                `[Deploy] A preparar para atualizar ${commandsJson.length} comandos em ${servidoresAtivos.length} servidor(es)...`,
-            );
-
-            // 2. Faz um loop por cada servidor autorizado e regista os comandos
-            for (const servidor of servidoresAtivos) {
-                try {
-                    await rest.put(
-                        Routes.applicationGuildCommands(
-                            process.env.CLIENT_ID,
-                            servidor.guildId,
-                        ),
-                        { body: commandsJson },
-                    );
-                    console.log(
-                        `[Sucesso] Comandos registados no servidor ID: ${servidor.guildId}`,
-                    );
-                } catch (err) {
-                    // O try/catch aqui dentro impede que o bot crashe caso tenha sido expulso de um servidor
-                    console.error(
-                        `[Erro] Falha ao registar no servidor ID ${servidor.guildId}:`,
-                        err.message,
-                    );
-                }
+                // Zera os comandos de barra do servidor antes de registrar os novos, garantindo que não haja duplicidade
+                await rest.put(
+                    Routes.applicationGuildCommands(client.user.id, guild.id),
+                    { body: [] },
+                );
+                // Substitui os comandos registrados no servidor pelos atuais (evita duplicidade e mantém o estado sincronizado)
+                await rest.put(
+                    Routes.applicationGuildCommands(client.user.id, guild.id),
+                    {
+                        body: commandsJson,
+                    },
+                );
+                // Confirma no console que os comandos foram registrados no servidor
+                console.log(
+                    `[DEPLOY SLASH COMMANDS] Comandos de barra registrados com sucesso para o servidor: ${guild.name} (${guild.id})`,
+                );
+            } catch (err) {
+                // Captura falhas em um servidor específico sem interromper o loop nos demais
+                console.error(
+                    `[ERRO DE DEPLOY SLASH COMMANDS] Erro ao registrar os comandos de barra para o servidor: ${guild.name} (${guild.id})`,
+                    err,
+                );
             }
-            */
-
-            // --- ALTERNATIVA SEM BANCO (Registo Global) ---
-            // Se quiser registar os comandos globalmente para todos os servidores do bot:
-            await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
+        }
+        // [OPÇÃO 2 - Registo global] Registra os comandos globalmente (isso pode levar até 1 hora para refletir em todos os servidores)
+        /*try {
+            console.log("[DEPLOY SLASH COMMANDS] Iniciando o registro dos comandos de barra...");
+            // Zera os comandos globais antes de registrar os novos, garantindo que não haja duplicidade
+            await rest.put(Routes.applicationCommands(client.user.id), {
+                body: [],
+            });
+            // Substitui os comandos globais pelos atuais (evita duplicidade e mantém o estado sincronizado)
+            await rest.put(Routes.applicationCommands(client.user.id), {
                 body: commandsJson,
             });
-
-            console.log(
-                `[Deploy Concluído] Sincronização de comandos globais terminada!`,
-            );
-        } catch (error) {
-            console.error("[Erro no Deploy Geral]:", error);
+            console.log("[DEPLOY SLASH COMMANDS] Comandos de barra registrados com sucesso!");
+        } catch (err
+        ) {
+            console.error("[ERRO DE DEPLOY SLASH COMMANDS] Erro ao registrar os comandos de barra:", err);
         }
+            */
     },
 };
