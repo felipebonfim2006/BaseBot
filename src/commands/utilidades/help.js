@@ -5,6 +5,7 @@ import {
     SlashCommandBuilder,
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
+    MessageFlags,
 } from "discord.js";
 import GuildModel from "../../database/models/GuildModel.js";
 import categoryHelper from "../../functions/categoryHelper.js";
@@ -130,7 +131,7 @@ async function runHelpMenu({ client, authorId, guildId, sendMessage, editMessage
         if (interaction.user.id !== authorId) {
             await interaction.reply({
                 content: "Apenas quem executou o comando pode usar este menu.",
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
             return;
         }
@@ -170,7 +171,7 @@ export default {
     aliases: ["ajuda", "h"],
     description: "Retorna com o menu de ajuda.",
 
-    // Função executada quando o comando é acionado via Slash Command (/)
+  // Função executada quando o comando é acionado via Slash Command (/)
     async executeSlash(interaction, client) {
         let replyMessage = null;
 
@@ -181,9 +182,14 @@ export default {
             sendMessage: async (payload) => {
                 const response = await interaction.reply({
                     ...payload,
-                    fetchReply: true,
+                    withResponse: true,
                 });
-                replyMessage = response;
+
+                // Extrai a Message do callback ou busca via fetchReply() como fallback
+                replyMessage =
+                    response.resource?.message ??
+                    (await interaction.fetchReply());
+
                 return replyMessage;
             },
             editMessage: (payload) =>
